@@ -1,0 +1,62 @@
+#---------------------------------------------------------------------------
+# Configurable properties for various test plans
+#---------------------------------------------------------------------------
+
+# Common test properties
+
+script_path=~/openstack/performance/scripts
+test_data_dir=~/openstack/performance/test_data
+
+# Thread Properties for various Test plans
+
+keystone_test_data_group.threads=
+keystone_test_data_group.loops=
+keystone_test_data_group.rampu=
+
+create_networks_group.threads=
+create_networks_group.loops=
+create_networks_group.rampup=
+
+create_server_group.threads=
+create_server_group.loop=
+create_server_group.rampup=
+
+# Keystone Test plan properties
+
+keystone_server_ip=
+keystone_admin_port=
+keystone_service_port=
+admin_auth_token=
+
+users_per_thread=
+tenants_per_thread=
+
+create_user_uri=
+create_tenant_uri=
+create_token_uri=
+
+users_test_data_file=
+tenants_test_data_file=
+
+# Servers Test plan properties
+
+flavor_ref=
+image_ref=
+nova_api_server_ip=
+nova_api_port=
+request_uri=
+instances_count=
+snapshots_count=
+
+# Networks Test plan properties
+
+label=jm_net
+bridge_interface=
+bridge=
+
+# Nova CLI management access properties
+
+host=
+username=
+password=
+nova_manage_path=/opt/openstack/nova/bin
