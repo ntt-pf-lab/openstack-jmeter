@@ -8,8 +8,7 @@ NOVA_DIR=$PERF_BASE_DIR/nova
 KEYSTONE_DIR=$PERF_BASE_DIR/keystone
 COMMON_DIR=$PERF_BASE_DIR/common
 
-
-SERVERS_TESTPLAN=$NOVA_DIR/test_plans/load/servers_unmesh.jmx
+SERVERS_TESTPLAN=$NOVA_DIR/test_plans/load/servers.jmx
 KEYSTONE_TESTPLAN=$KEYSTONE_DIR/test_plans/load/keystone.jmx
 NETWORKS_TESTPLAN=$NOVA_DIR/test_plans/load/create_networks.jmx
 
