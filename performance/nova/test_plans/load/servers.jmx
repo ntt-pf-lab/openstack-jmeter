@@ -28,7 +28,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Get Token and Tenant from file" enabled="true">
-          <stringProp name="filename">/home/rohit/openstack/performance/test_plans/temp/tokens_tenants.csv</stringProp>
+          <stringProp name="filename">/home/rohit/openstack-jmeter/performance/keystone/test_data/temp/tokens_tenants.csv</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="variableNames">token,tenant_name</stringProp>
           <stringProp name="delimiter">,</stringProp>
@@ -104,8 +104,8 @@
                   <stringProp name="Argument.value">{&#xd;
     &quot;server&quot; : {&#xd;
         &quot;name&quot; : &quot;jm_instance&quot;,&#xd;
-        &quot;imageRef&quot; : &quot;${__P(&quot;flavor_ref&quot;)}&quot;,&#xd;
-        &quot;flavorRef&quot; : &quot;${__P(&quot;image_ref&quot;)}&quot;,&#xd;
+        &quot;imageRef&quot; : &quot;${__P(image_ref)}&quot;,&#xd;
+        &quot;flavorRef&quot; : &quot;${__P(flavor_ref)}&quot;,&#xd;
         &quot;metadata&quot; : {&#xd;
             &quot;My Server Name&quot; : &quot;Jmeter Test Instance&quot; &#xd;
         }&#xd;
@@ -175,6 +175,24 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
             <boolProp name="displayJMeterVariables">true</boolProp>
             <boolProp name="displaySystemProperties">true</boolProp>
           </DebugSampler>
+          <hashTree/>
+          <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Run Perf Analyzer for request" enabled="true">
+            <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="ScriptPath" elementType="Argument">
+                  <stringProp name="Argument.name">ScriptPath</stringProp>
+                  <stringProp name="Argument.value">${__P(script_path)}/run_nova_api_perf_analyzer.sh</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="Command" elementType="Argument">
+                  <stringProp name="Argument.name">Command</stringProp>
+                  <stringProp name="Argument.value">${create_api_name}:${create_server_request_id_g1}:${tenant_name}:jm_user:test_thread:${test_start_ms}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="classname">ShellExecutor</stringProp>
+          </JavaSampler>
           <hashTree/>
           <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="Check Server ACTIVE While Controller" enabled="true">
             <stringProp name="WhileController.condition">${__javaScript( &quot;${server_status}&quot; != &quot;ACTIVE&quot;)}</stringProp>
@@ -310,6 +328,24 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <boolProp name="displaySystemProperties">true</boolProp>
             </DebugSampler>
             <hashTree/>
+            <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Run Perf Analyzer for request" enabled="true">
+              <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="ScriptPath" elementType="Argument">
+                    <stringProp name="Argument.name">ScriptPath</stringProp>
+                    <stringProp name="Argument.value">${__P(script_path)}/run_nova_api_perf_analyzer.sh</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="Command" elementType="Argument">
+                    <stringProp name="Argument.name">Command</stringProp>
+                    <stringProp name="Argument.value">${snapshot_api_name}:${create_snapshot_request_id_g1}:${tenant_name}:jm_user:test_thread:${test_start_ms}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="classname">ShellExecutor</stringProp>
+            </JavaSampler>
+            <hashTree/>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Delete Snapshot" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -415,7 +451,43 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
             <boolProp name="displaySystemProperties">true</boolProp>
           </DebugSampler>
           <hashTree/>
+          <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Run Perf Analyzer for request" enabled="true">
+            <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="ScriptPath" elementType="Argument">
+                  <stringProp name="Argument.name">ScriptPath</stringProp>
+                  <stringProp name="Argument.value">${__P(script_path)}/run_nova_api_perf_analyzer.sh</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+                <elementProp name="Command" elementType="Argument">
+                  <stringProp name="Argument.name">Command</stringProp>
+                  <stringProp name="Argument.value">${delete_api_name}:${delete_server_request_id_g1}:${tenant_name}:jm_user:test_thread:${test_start_ms}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+            <stringProp name="classname">ShellExecutor</stringProp>
+          </JavaSampler>
+          <hashTree/>
         </hashTree>
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Generate Log Analysis Reports" enabled="true">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="ScriptPath" elementType="Argument">
+                <stringProp name="Argument.name">ScriptPath</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/run_log_analysis_report_generator.sh</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="Command" elementType="Argument">
+                <stringProp name="Argument.name">Command</stringProp>
+                <stringProp name="Argument.value">${test_start_ms}:${__P(reports_dir)}/stats</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">ShellExecutor</stringProp>
+        </JavaSampler>
+        <hashTree/>
         <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
@@ -445,7 +517,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/assertion_results.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/assertion_results.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
@@ -477,7 +549,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/aggregate_report.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/aggregate_report.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="kg.apc.jmeter.vizualizers.ThreadsStateOverTimeGui" testclass="ResultCollector" testname="jp@gc - Active Threads Over Time" enabled="true">
@@ -509,7 +581,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/active_threads_over_time.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/active_threads_over_time.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -543,7 +615,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/bytes_throughput_overtime.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/bytes_throughput_overtime.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -577,7 +649,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/hits_per_second.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/hits_per_second.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -611,7 +683,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/response_code_per_second.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/response_code_per_second.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -645,7 +717,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/response_times_over_time.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_over_time.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -679,7 +751,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/response_times_distribution.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_distribution.jtl</stringProp>
           <longProp name="interval_grouping">100</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -713,7 +785,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/response_latencies_over_time.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/response_latencies_over_time.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -747,7 +819,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/response_times_percentiles.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_percentiles.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -781,7 +853,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/perf_mon.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/perf_mon.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
           <collectionProp name="metricConnections">
@@ -847,7 +919,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/throughput_vs_threads.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/throughput_vs_threads.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -881,7 +953,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/response_times_vs_threads.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_vs_threads.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -915,7 +987,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/transactions_pers_second.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/transactions_pers_second.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -949,7 +1021,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/summary_report.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/summary_report.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
@@ -981,7 +1053,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/view_results_tree.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/view_results_tree.jtl</stringProp>
           <boolProp name="ResultCollector.success_only_logging">true</boolProp>
         </ResultCollector>
         <hashTree/>
@@ -1014,7 +1086,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/aggregate_graph.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/aggregate_graph.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="DistributionGraphVisualizer" testclass="ResultCollector" testname="Distribution Graph (alpha)" enabled="true">
@@ -1046,7 +1118,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/rohit/openstack/performance/reports/jtls/distribution_graph.jtl</stringProp>
+          <stringProp name="filename">${__P(reports_dir)}/jtls/distribution_graph.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer" enabled="true">
