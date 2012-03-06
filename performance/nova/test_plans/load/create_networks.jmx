@@ -46,7 +46,7 @@ vars.put(&quot;label&quot;,label)
 vars.put(&quot;bridge&quot;,bridge)
 vars.put(&quot;bridge_interface&quot;,bridge_interface)
 vars.put(&quot;nova_manage_path&quot;,nova_manage_path)
-vars.put(&quot;tenants_file_dir&quot;,&quot;/home/rohit/openstack/performance/test_plans/temp&quot;)
+vars.put(&quot;tenants_file_dir&quot;,&quot;/home/rohit/openstack-jmeter/performance/keystone/test_data/temp&quot;)
 vars.put(&quot;scripts_path&quot;, scripts_path)</stringProp>
         </BSFPreProcessor>
         <hashTree/>
@@ -75,38 +75,6 @@ vars.put(&quot;scripts_path&quot;, scripts_path)</stringProp>
         </DebugSampler>
         <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <objProp>
-          <name>saveConfig</name>
-          <value class="SampleSaveConfiguration">
-            <time>true</time>
-            <latency>true</latency>
-            <timestamp>true</timestamp>
-            <success>true</success>
-            <label>true</label>
-            <code>true</code>
-            <message>true</message>
-            <threadName>true</threadName>
-            <dataType>true</dataType>
-            <encoding>false</encoding>
-            <assertions>true</assertions>
-            <subresults>true</subresults>
-            <responseData>false</responseData>
-            <samplerData>false</samplerData>
-            <xml>true</xml>
-            <fieldNames>false</fieldNames>
-            <responseHeaders>false</responseHeaders>
-            <requestHeaders>false</requestHeaders>
-            <responseDataOnError>false</responseDataOnError>
-            <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-            <assertionsResultsToSave>0</assertionsResultsToSave>
-            <bytes>true</bytes>
-          </value>
-        </objProp>
-        <stringProp name="filename"></stringProp>
-      </ResultCollector>
-      <hashTree/>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>
