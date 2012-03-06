@@ -31,16 +31,18 @@ class HTMLReportGenerator:
     IMG_WIDTH = 800
     IMG_HEIGHT = 600
 
-    def __init__(self, test_start_ms, reports_dir):
+    def __init__(self, timestamped_dir, reports_dir):
         self.config = utils.PerfAnalyzerConfig()
         self.source_dir = os.path.join(self.config.result_file_dir,\
-                                        test_start_ms)
+                                        timestamped_dir)
         if not path.exists(self.source_dir) or\
             not access(self.source_dir, R_OK):
             print _("Specified source_dir '%s' does not exist or insufficient"\
                   "permissions accessing the directory.") % self.source_dir
             sys.exit(0)
-        self.reports_dir = reports_dir
+        self.reports_dir = path.join(reports_dir, timestamped_dir)
+        if not path.exists(self.reports_dir):
+            os.makedirs(self.reports_dir)
         self.h1_style = "font-family:Verdana,sans-serif; font-size:18pt; "\
                         "color:rgb(96,0,0)"
         self.h2_style = "font-family:Verdana,sans-serif; font-size:16pt; "\
@@ -92,21 +94,22 @@ class HTMLReportGenerator:
         """
         Calculate the avg, min, max from the metrics.
         """
-        metrics_start_column = 6
         #fetch the fields in the order to display.
         fp = open(csv_fname, 'rb')
         csv_iter = csv.reader(fp)
         headers = csv_iter.next()
-        headers.remove('compute_host')
-        labels = headers[metrics_start_column:]
+        if 'compute_host' in headers:
+            headers.remove('compute_host')
         row1 = csv_iter.next()
         fp.close()
         #only Create Server API has instance_type parameter.
         if row1[0] == 'create':
+            labels = headers[6:]
             summary_metrics = self._fetch_summary_metrics_by_instance_type(
                                     csv_fname,
                                     labels)
         else:
+            labels = headers[5:]
             summary_metrics = self._fetch_summary_metrics(csv_fname, labels)
         return labels, summary_metrics
 
@@ -225,6 +228,7 @@ class HTMLReportGenerator:
         if 'request_count' in metrics:
             #generate ungrouped report.
             png_file = fname_name_ext[0] + '.png'
+            png_fpath = path.join(self.reports_dir, png_file)
             instance_count = metrics.pop('request_count')
             alt_text = "Service Level Summary Report"
             cairoplot.dot_line_plot(
@@ -252,7 +256,6 @@ class HTMLReportGenerator:
 
             #generate the min-avg-max graph for each instance type.
             for instance_type, graph_data in metrics.iteritems():
-                print instance_type, graph_data
                 instance_count = graph_data.pop('request_count')
                 alt_text = "Instance type %s summary report" % instance_type
                 cairoplot.dot_line_plot(
@@ -306,7 +309,7 @@ class HTMLReportGenerator:
         html = open(fpath, 'w')
         html.write(str(page))
         html.close()
-        print "Generated performance report : %s" % fpath
+        print _("Generated performance report : %s") % fpath
 
     def _generate_table(self, page, header_list, data_iter):
         """
@@ -352,19 +355,19 @@ class HTMLReportGenerator:
 
 def main():
     if len(sys.argv) < 3:
-        print _("Usage: ./log_analysis_report_generator test_start_ms "\
+        print _("Usage: ./log_analysis_report_generator test_start_timestamp "\
               "dest_dir"\
-              "\ntest_start_ms: Time when test was started"\
+              "\ntest_start_timestamp: Time when test was started"\
               "\ndest_dir: Path to create the HTML report files\n")
         sys.exit(0)
 
-    test_start_ms = sys.argv[1]
+    test_start_timestamp = sys.argv[1]
     dest_dir = sys.argv[2]
     if not path.exists(dest_dir) or not access(dest_dir, W_OK):
         print "Specified source_dir '%s' does not exist or insufficient"\
               "permissions accessing the directory." % dest_dir
         sys.exit(0)
-    report_gen = HTMLReportGenerator(test_start_ms, dest_dir)
+    report_gen = HTMLReportGenerator(test_start_timestamp, dest_dir)
     report_gen.generate_html_report()
 
 

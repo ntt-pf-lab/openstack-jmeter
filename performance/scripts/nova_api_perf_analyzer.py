@@ -49,15 +49,15 @@ class NovaAPIAnalyzer(object):
     def _get_results_filename(self):
         """Return the master results file name."""
         #read the prefix from config file and generate results file name.
-        filename = self.config.result_file_prefix + "_index." +\
-                   self.output_format
+        filename = self.config.result_file_prefix + "_" + self.api +\
+                   "_index." + self.output_format
         return os.path.join(self.results_dir, filename)
 
     def _get_service_results_filename(self, service_name):
         """Return the result file name for the service."""
         #read the prefix from config file and generate service level file name.
-        filename = self.config.result_file_prefix + "_" + service_name +\
-                   "." + self.output_format
+        filename = self.config.result_file_prefix + "_" + self.api + "_" + \
+                   service_name + "." + self.output_format
         return os.path.join(self.results_dir, filename)
 
     def _get_common_result_fields(self):
@@ -66,10 +66,12 @@ class NovaAPIAnalyzer(object):
                        'tenant_id': self.tenant_id,
                        'user_id': self.user_id,
                        'thread_group': self.thread_group,
-                       'api_name': self.api,
-                       'instance_type': self.instance_type}
+                       'api_name': self.api}
         result_fields_ordered = ['api_name', 'request_id', 'tenant_id',
-                                  'user_id', 'thread_group', 'instance_type']
+                                  'user_id', 'thread_group']
+        if self.api == 'create':
+            result_dict['instance_type'] = self.instance_type
+            result_fields_ordered.append('instance_type')
         return result_dict, result_fields_ordered
 
     def _fetch_service_tasks(self, service_name):
@@ -202,7 +204,7 @@ class CreateServerAnalyzer(NovaAPIAnalyzer):
 
     def _fetch_compute_name(self):
         """Fetch the compute server on which instance is spawned."""
-        compute_name_regex = "^\S{3} \d{2} \d{2}\:\d{2}\:\d{2} "\
+        compute_name_regex = "^\S{3}\s+\d{1,2} \d{2}\:\d{2}\:\d{2} "\
                              "(?P<compute_name>[\S]+) [\s\S]+ spawned "\
                              "successfully"
         log_parser = self.log_analyzer.log_parser
@@ -379,7 +381,7 @@ class CreateSnapshotAnalyzer(NovaAPIAnalyzer):
 
     def analyze_logs(self):
         """Fetches the metrics and logs the results."""
-        metrics = self.fetch_metrics()
+        metrics = self.fetch_metrics(self.server_logs)
         #write result to the master csv file
         self.generate_master_results(metrics['task_time'])
         #write result to the nova-api csv file.
