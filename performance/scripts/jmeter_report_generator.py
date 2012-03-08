@@ -12,7 +12,7 @@ import csv
 import markup
 import subprocess
 import sys
-from os import path, access, R_OK
+import os
 
 
 plugin_class_file_map = {'AggregateReport':'aggregate_report.jtl',
@@ -54,6 +54,8 @@ class HTMLReportGenerator:
         Generate png and csv files for all plugin_classes whose .jtl are 
         created.
         """
+        if not os.listdir(self.source_dir):
+            raise Exception, "No jtl files were found in %s" % self.source_dir 
         for key,value in plugin_class_file_map.items():
             fpath = path.join(self.source_dir, value)
             dpath = path.join(self.reports_dir, key)
@@ -101,7 +103,7 @@ class HTMLReportGenerator:
         html = open(fpath, 'w')
         html.write(str(page))
         html.close()
-        print "Generated performance report : %s" % fpath
+        print "Generated Performance Report : %s" % fpath
 
     def _generate_table(self, page, header_list, data_iter):
         """
@@ -154,6 +156,8 @@ def main():
         sys.exit(0)
     cmd_runner_path = sys.argv[3] if len(sys.argv) > 3 else None
     report_gen = HTMLReportGenerator(sys.argv[1], sys.argv[2], cmd_runner_path)
+    print "Listener JTL files are stored in %s" % sys.argv[1]
+    print "Generating PNG and CSV files in %s" % sys.argv[2]
     report_gen.generate_png_and_csv_from_jtl()
     report_gen.generate_html_report()
 

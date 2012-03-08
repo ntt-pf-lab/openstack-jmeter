@@ -27,6 +27,13 @@ report_csv_file_map = {'ServiceLevelReport': '_index.csv',
                         'NovaNetworkService': '_network.csv'}
 
 
+instance_type_id_name_map = {'1': 'm1.tiny',
+                             '2': 'm1.small',
+                             '3': 'm1.medium',
+                             '4': 'm1.large',
+                             '5': 'm1.xlarge'}
+
+
 class HTMLReportGenerator:
     IMG_WIDTH = 800
     IMG_HEIGHT = 600
@@ -34,13 +41,14 @@ class HTMLReportGenerator:
     def __init__(self, timestamped_dir, reports_dir):
         self.config = utils.PerfAnalyzerConfig()
         self.source_dir = os.path.join(self.config.result_file_dir,\
-                                        timestamped_dir)
+                                        timestamped_dir,
+                                        "stats")
         if not path.exists(self.source_dir) or\
             not access(self.source_dir, R_OK):
             print _("Specified source_dir '%s' does not exist or insufficient"\
                   "permissions accessing the directory.") % self.source_dir
             sys.exit(0)
-        self.reports_dir = path.join(reports_dir, timestamped_dir)
+        self.reports_dir = path.join(reports_dir, timestamped_dir, "stats")
         if not path.exists(self.reports_dir):
             os.makedirs(self.reports_dir)
         self.h1_style = "font-family:Verdana,sans-serif; font-size:18pt; "\
@@ -69,6 +77,16 @@ class HTMLReportGenerator:
             if csv_name.endswith(csv_str):
                 return report_name
         return None
+
+    def _fetch_api_name(self, csv_name):
+        """"
+        Fetch the API name field from the csv.
+        """
+        fp = open(csv_name, 'rb')
+        csv_iter = csv.DictReader(fp)
+        row1 = csv_iter.next()
+        fp.close()
+        return row1['api_name']
 
     def _calculate_summary_metrics(self, metric, results_list):
         skip_field_response = {'min': '-',
@@ -102,8 +120,9 @@ class HTMLReportGenerator:
             headers.remove('compute_host')
         row1 = csv_iter.next()
         fp.close()
+        api_name = row1[0]
         #only Create Server API has instance_type parameter.
-        if row1[0] == 'create':
+        if api_name == 'create':
             labels = headers[6:]
             summary_metrics = self._fetch_summary_metrics_by_instance_type(
                                     csv_fname,
@@ -169,8 +188,9 @@ class HTMLReportGenerator:
         """
         avg_png_fpath = path.join(self.reports_dir, avg_png_file)
         avg_graph_data = {}
-        for instance_type, graph_data in metrics.iteritems():
-            key = "type-%s" % instance_type
+        for instance_type_id, graph_data in metrics.iteritems():
+            instance_type_name = instance_type_id_name_map[instance_type_id]
+            key = "%s" % instance_type_name
             avg_graph_data[key] = graph_data['avg']
 
         cairoplot.dot_line_plot(
@@ -181,7 +201,8 @@ class HTMLReportGenerator:
                     axis=True,
                     series_legend=True,
                     y_title="Time in ms",
-                    x_title="Instance Type Summary report",
+                    x_title="Average API Response Time Summary - Per "\
+                            "instance type",
                     x_labels=labels)
         page.img(src=avg_png_file, alt="Instance Type Summary report")
         page.br()
@@ -239,7 +260,7 @@ class HTMLReportGenerator:
                         axis=True,
                         series_legend=True,
                         y_title="Time in ms",
-                        x_title="Service Level Summary Report",
+                        x_title="Response Time Trend - Across services",
                         x_labels=labels)
             page.img(src=png_file, alt=alt_text)
             page.br()
@@ -257,7 +278,9 @@ class HTMLReportGenerator:
             #generate the min-avg-max graph for each instance type.
             for instance_type, graph_data in metrics.iteritems():
                 instance_count = graph_data.pop('request_count')
-                alt_text = "Instance type %s summary report" % instance_type
+                instance_type_name = instance_type_id_name_map[instance_type]
+                alt_text = "Instance type '%s' summary report" % \
+                           instance_type_name
                 cairoplot.dot_line_plot(
                             png_fpath % instance_type,
                             graph_data,
@@ -266,12 +289,32 @@ class HTMLReportGenerator:
                             axis=True,
                             series_legend=True,
                             y_title="Time in ms",
-                            x_title="Instance Type - %(instance_type)s, "\
-                                    "Instance Count - %(instance_count)s" %
-                                    locals(),
+                            x_title="Response Time Trend (For Instance Type: "\
+                                    "%(instance_type_name)s, Instance Count: "\
+                                    "%(instance_count)s)" % locals(),
                             x_labels=labels)
                 page.img(src=png_file % instance_type, alt=alt_text)
                 page.br()
+
+    def _generate_report_from_csv(self, csv_file, report_name, page):
+        api_name = self._fetch_api_name(csv_file)
+        report_name = report_name + "-" + api_name.capitalize() + "API"
+        #add the graphical report.
+        page.h2(report_name, style=self.h2_style)
+        if report_name.startswith('ServiceLevelReport'):
+            self._generate_graph_from_metrics(csv_file, page)
+        report_path = self.generate_tabular_html_report(report_name,
+                                                        csv_file)
+        if report_path:
+            #copy the csv file to reports directory.
+            if path.dirname(csv_file) != self.reports_dir:
+                shutil.copy(csv_file, self.reports_dir)
+            csv_fname = path.basename(csv_file)
+            page.a("Download csv report", href=csv_fname,
+                   style=self.a_style)
+            page.a("View csv report", href=report_path,
+                    style=self.a_style)
+        page.a("Top", href="#top", style=self.a_style)
 
     def generate_html_report(self):
         """
@@ -284,25 +327,17 @@ class HTMLReportGenerator:
         page.h1("API Performance report", style=self.h1_style)
         page.hr()
         index = 0
-        for csv_file in csv_files:
-            report_name = self._fetch_report_name(csv_file)
-            if report_name:
-                #add the graphical report.
-                page.h2(report_name, style=self.h2_style)
-                if report_name == 'ServiceLevelReport':
-                    self._generate_graph_from_metrics(csv_file, page)
-                report_path = self.generate_tabular_html_report(report_name,
-                                                                csv_file)
-                if report_path:
-                    #copy the csv file to reports directory.
-                    shutil.copy(csv_file, self.reports_dir)
-                    csv_fname = path.basename(csv_file)
-                    page.a("Download csv report", href=csv_fname,
-                           style=self.a_style)
-                    page.a("View csv report", href=report_path,
-                            style=self.a_style)
-                page.a("Top", href="#top", style=self.a_style)
-            page.br()
+        ordered_reports_list = ['NovaAPIService', 'NovaSchedulerService',
+                                'NovaComputeService', 'NovaNetworkService',
+                                'ServiceLevelReport']
+        report_idx = 0
+        while report_idx < len(ordered_reports_list):
+            for csv_file in csv_files:
+                report_name = self._fetch_report_name(csv_file)
+                if report_name == ordered_reports_list[report_idx]:
+                    self._generate_report_from_csv(csv_file, report_name, page)
+                    page.br()
+            report_idx += 1
 
         #write the performance report html file.
         fpath = path.join(self.reports_dir, 'log_analysis_report.html')

@@ -37,8 +37,13 @@ timestamp_dir = ymd_stamp + &apos;-&apos; + hms_stamp
 vars.put(&quot;timestamp_dir&quot;, timestamp_dir)
 
 test_data_ts_dir =  props.get(&quot;test_data_dir&quot;) + &quot;/&quot; + timestamp_dir
+test_reports_ts_dir = props.get(&quot;reports_dir&quot;) + &quot;/&quot; + timestamp_dir
 
-props.put(&quot;test_data_ts_dir&quot;,  test_data_ts_dir)</stringProp>
+props.put(&quot;timestamp_dir&quot;, timestamp_dir)
+props.put(&quot;test_data_ts_dir&quot;,  test_data_ts_dir)
+props.put(&quot;test_reports_ts_dir&quot;, test_reports_ts_dir)
+
+</stringProp>
         </BSFPreProcessor>
         <hashTree/>
         <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
@@ -190,7 +195,7 @@ vars.put(&quot;test_data_ts_dir&quot;,  test_data_ts_dir)</stringProp>
           </DebugSampler>
           <hashTree/>
         </hashTree>
-        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Copy Data files to Temp folder" enabled="true">
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Copy Data files to Temp folder" enabled="false">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="ScriptPath" elementType="Argument">
@@ -200,7 +205,7 @@ vars.put(&quot;test_data_ts_dir&quot;,  test_data_ts_dir)</stringProp>
               </elementProp>
               <elementProp name="Command" elementType="Argument">
                 <stringProp name="Argument.name">Command</stringProp>
-                <stringProp name="Argument.value">${test_data_ts_dir}</stringProp>
+                <stringProp name="Argument.value">${test_data_ts_dir}:${__P(test_data_dir)}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -285,24 +290,13 @@ vars.put(&quot;test_data_ts_dir&quot;,  test_data_ts_dir)</stringProp>
             <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
               <stringProp name="delimiter">,</stringProp>
               <stringProp name="fileEncoding"></stringProp>
-              <stringProp name="filename">/home/rohit/openstack/performance/test_plans/temp/tenants.csv</stringProp>
+              <stringProp name="filename">${__P(test_data_ts_dir)}/tenants.csv</stringProp>
               <boolProp name="quotedData">false</boolProp>
               <boolProp name="recycle">true</boolProp>
               <stringProp name="shareMode">All threads</stringProp>
               <boolProp name="stopThread">false</boolProp>
               <stringProp name="variableNames">tenant,tenant_id</stringProp>
             </CSVDataSet>
-            <hashTree/>
-            <BSFPreProcessor guiclass="TestBeanGUI" testclass="BSFPreProcessor" testname="BSF PreProcessor" enabled="false">
-              <stringProp name="scriptLanguage">bml</stringProp>
-              <stringProp name="parameters"></stringProp>
-              <stringProp name="filename"></stringProp>
-              <stringProp name="script">log.info(vars.get(&quot;user&quot;_name));
-log.info(vars.get(&quot;password&quot;));
-log.info(vars.get(&quot;email&quot;));
-log.info(vars.get(&quot;tenantId&quot;));
-</stringProp>
-            </BSFPreProcessor>
             <hashTree/>
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
               <collectionProp name="Asserion.test_strings">
@@ -357,7 +351,7 @@ log.info(vars.get(&quot;tenantId&quot;));
           <stringProp name="classname">ShellExecutor</stringProp>
         </JavaSampler>
         <hashTree/>
-        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Copy Data files to Temp folder" enabled="true">
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Copy Data files to Temp folder" enabled="false">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="ScriptPath" elementType="Argument">
@@ -367,7 +361,7 @@ log.info(vars.get(&quot;tenantId&quot;));
               </elementProp>
               <elementProp name="Command" elementType="Argument">
                 <stringProp name="Argument.name">Command</stringProp>
-                <stringProp name="Argument.value">${test_data_ts_dir}</stringProp>
+                <stringProp name="Argument.value">${test_data_ts_dir}:${__P(test_data_dir)}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -425,24 +419,13 @@ log.info(vars.get(&quot;tenantId&quot;));
             <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="CSV Data Set Config" enabled="true">
               <stringProp name="delimiter">,</stringProp>
               <stringProp name="fileEncoding"></stringProp>
-              <stringProp name="filename">/home/rohit/openstack/performance/test_plans/temp/user_tenants.csv</stringProp>
+              <stringProp name="filename">${__P(test_data_ts_dir)}/user_tenants.csv</stringProp>
               <boolProp name="quotedData">false</boolProp>
               <boolProp name="recycle">true</boolProp>
               <stringProp name="shareMode">All threads</stringProp>
               <boolProp name="stopThread">false</boolProp>
               <stringProp name="variableNames">user_name,password,tenant,tenant_id</stringProp>
             </CSVDataSet>
-            <hashTree/>
-            <BSFPreProcessor guiclass="TestBeanGUI" testclass="BSFPreProcessor" testname="BSF PreProcessor" enabled="false">
-              <stringProp name="scriptLanguage">javascript</stringProp>
-              <stringProp name="parameters"></stringProp>
-              <stringProp name="filename"></stringProp>
-              <stringProp name="script">log.info(vars.get(&quot;user_name&quot;));
-log.info(vars.get(&quot;password&quot;));
-log.info(vars.get(&quot;tenant&quot;));
-log.info(vars.get(&quot;tenant_id&quot;));
-</stringProp>
-            </BSFPreProcessor>
             <hashTree/>
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
               <collectionProp name="Asserion.test_strings">
@@ -488,7 +471,7 @@ log.info(vars.get(&quot;tenant_id&quot;));
           </DebugSampler>
           <hashTree/>
         </hashTree>
-        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Copy Data files to Temp folder" enabled="true">
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Copy Data files to Temp folder" enabled="false">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="ScriptPath" elementType="Argument">
@@ -498,7 +481,25 @@ log.info(vars.get(&quot;tenant_id&quot;));
               </elementProp>
               <elementProp name="Command" elementType="Argument">
                 <stringProp name="Argument.name">Command</stringProp>
-                <stringProp name="Argument.value">${test_data_ts_dir}</stringProp>
+                <stringProp name="Argument.value">${test_data_ts_dir}:${__P(test_data_dir)}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">ShellExecutor</stringProp>
+        </JavaSampler>
+        <hashTree/>
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Create Reports Directory and Timestamp CSV file" enabled="true">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="ScriptPath" elementType="Argument">
+                <stringProp name="Argument.name">ScriptPath</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/create_reports_dir.sh</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="Command" elementType="Argument">
+                <stringProp name="Argument.name">Command</stringProp>
+                <stringProp name="Argument.value">${__P(timestamp_dir)}:${__P(reports_dir)}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>

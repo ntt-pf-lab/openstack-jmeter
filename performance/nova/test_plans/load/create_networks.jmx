@@ -26,6 +26,17 @@
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Get Current Timestamp" enabled="true">
+          <stringProp name="filename">${__P(reports_dir)}/curr_timestamp.csv</stringProp>
+          <stringProp name="fileEncoding"></stringProp>
+          <stringProp name="variableNames">timestamp_dir</stringProp>
+          <stringProp name="delimiter">,</stringProp>
+          <boolProp name="quotedData">true</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <boolProp name="stopThread">true</boolProp>
+          <stringProp name="shareMode">All threads</stringProp>
+        </CSVDataSet>
+        <hashTree/>
         <BSFPreProcessor guiclass="TestBeanGUI" testclass="BSFPreProcessor" testname="Create jmeter variables for nova-manage network create" enabled="true">
           <stringProp name="scriptLanguage">javascript</stringProp>
           <stringProp name="parameters"></stringProp>
@@ -38,6 +49,7 @@ bridge = props.get(&quot;bridge&quot;)
 bridge_interface = props.get(&quot;bridge_interface&quot;)
 nova_manage_path = props.get(&quot;nova_manage_path&quot;)
 scripts_path = props.get(&quot;script_path&quot;)
+tenants_file_dir = props.get(&quot;test_data_dir&quot;) + &quot;/&quot; + vars.get(&quot;timestamp_dir&quot;)
 
 vars.put(&quot;host&quot;,host)
 vars.put(&quot;username&quot;,username)
@@ -46,8 +58,8 @@ vars.put(&quot;label&quot;,label)
 vars.put(&quot;bridge&quot;,bridge)
 vars.put(&quot;bridge_interface&quot;,bridge_interface)
 vars.put(&quot;nova_manage_path&quot;,nova_manage_path)
-vars.put(&quot;tenants_file_dir&quot;,&quot;/home/rohit/openstack-jmeter/performance/keystone/test_data/temp&quot;)
-vars.put(&quot;scripts_path&quot;, scripts_path)</stringProp>
+vars.put(&quot;scripts_path&quot;, scripts_path)
+vars.put(&quot;tenants_file_dir&quot;, tenants_file_dir)</stringProp>
         </BSFPreProcessor>
         <hashTree/>
         <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Run nova-manage script" enabled="true">
@@ -55,12 +67,12 @@ vars.put(&quot;scripts_path&quot;, scripts_path)</stringProp>
             <collectionProp name="Arguments.arguments">
               <elementProp name="ScriptPath" elementType="Argument">
                 <stringProp name="Argument.name">ScriptPath</stringProp>
-                <stringProp name="Argument.value">${scripts_path}/run_gen_networks.sh</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/run_python_script.sh</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="Command" elementType="Argument">
                 <stringProp name="Argument.name">Command</stringProp>
-                <stringProp name="Argument.value">${host}:${username}:${password}:${bridge_interface}:${bridge}:${tenants_file_dir}:${nova_manage_path}</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/gen_networks.py:${host}:${username}:${password}:${bridge_interface}:${bridge}:${tenants_file_dir}:${nova_manage_path}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>

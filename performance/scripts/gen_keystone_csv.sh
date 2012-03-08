@@ -9,6 +9,8 @@ if [ ! -e $test_data_dir ]; then
     mkdir -p $test_data_dir
 fi
 
+echo "Creating '$csv_file' file in $test_data_dir"
+
 if [ -z $test_data2 ]
 then
     echo $test_data >> $test_data_dir/$csv_file

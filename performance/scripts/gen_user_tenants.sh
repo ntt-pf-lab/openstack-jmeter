@@ -5,10 +5,10 @@ users_file=$data_dir/users.csv
 tenants_file=$data_dir/tenants.csv
 output_file='user_tenants.csv'
 
-echo "Data Directory is: $data_dir"
-
 usr_count=`wc -l $users_file|awk '{print $1}'`
 ten_count=`wc -l $tenants_file|awk '{print $1}'`
+
+echo "Creating $output_file in $data_dir"
 
 if [ $ten_count -le $usr_count ]
 then

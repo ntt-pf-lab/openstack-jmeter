@@ -11,6 +11,53 @@
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
     <hashTree>
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">1</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <longProp name="ThreadGroup.start_time">1331177280000</longProp>
+        <longProp name="ThreadGroup.end_time">1331177280000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+      </SetupThreadGroup>
+      <hashTree>
+        <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Get Current Timestamp" enabled="true">
+          <stringProp name="filename">${__P(reports_dir)}/curr_timestamp.csv</stringProp>
+          <stringProp name="fileEncoding"></stringProp>
+          <stringProp name="variableNames">timestamp_dir</stringProp>
+          <stringProp name="delimiter">,</stringProp>
+          <boolProp name="quotedData">true</boolProp>
+          <boolProp name="recycle">true</boolProp>
+          <boolProp name="stopThread">true</boolProp>
+          <stringProp name="shareMode">All threads</stringProp>
+        </CSVDataSet>
+        <hashTree/>
+        <BSFPreProcessor guiclass="TestBeanGUI" testclass="BSFPreProcessor" testname="BSF PreProcessor" enabled="true">
+          <stringProp name="scriptLanguage">javascript</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="script">timestamp_dir = vars.get(&quot;timestamp_dir&quot;)
+props.put(&quot;timestamp_dir&quot;, timestamp_dir)
+
+test_data_ts_dir = props.get(&quot;test_data_dir&quot;) + &quot;/&quot; + timestamp_dir
+props.put(&quot;test_data_ts_dir&quot;, test_data_ts_dir)
+
+test_reports_ts_dir = props.get(&quot;reports_dir&quot;) + &quot;/&quot; + timestamp_dir
+props.put(&quot;test_reports_ts_dir&quot;, test_reports_ts_dir)</stringProp>
+        </BSFPreProcessor>
+        <hashTree/>
+        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+          <boolProp name="displayJMeterProperties">true</boolProp>
+          <boolProp name="displayJMeterVariables">true</boolProp>
+          <boolProp name="displaySystemProperties">true</boolProp>
+        </DebugSampler>
+        <hashTree/>
+      </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Servers API Thread Group" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
@@ -28,7 +75,7 @@
       </ThreadGroup>
       <hashTree>
         <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Get Token and Tenant from file" enabled="true">
-          <stringProp name="filename">/home/rohit/openstack-jmeter/performance/keystone/test_data/temp/tokens_tenants.csv</stringProp>
+          <stringProp name="filename">${__P(test_data_ts_dir)}/tokens_tenants.csv</stringProp>
           <stringProp name="fileEncoding"></stringProp>
           <stringProp name="variableNames">token,tenant_name</stringProp>
           <stringProp name="delimiter">,</stringProp>
@@ -163,14 +210,12 @@
             <BSFPostProcessor guiclass="TestBeanGUI" testclass="BSFPostProcessor" testname="Set variables" enabled="true">
               <stringProp name="filename"></stringProp>
               <stringProp name="parameters"></stringProp>
-              <stringProp name="script">vars.put(&quot;server_status&quot;,&quot;None&quot;);
-test_start_time = props.get(&quot;TESTSTART.MS&quot;);
-vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
+              <stringProp name="script">vars.put(&quot;server_status&quot;,&quot;None&quot;);</stringProp>
               <stringProp name="scriptLanguage">javascript</stringProp>
             </BSFPostProcessor>
             <hashTree/>
           </hashTree>
-          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
             <boolProp name="displayJMeterProperties">true</boolProp>
             <boolProp name="displayJMeterVariables">true</boolProp>
             <boolProp name="displaySystemProperties">true</boolProp>
@@ -181,12 +226,12 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <collectionProp name="Arguments.arguments">
                 <elementProp name="ScriptPath" elementType="Argument">
                   <stringProp name="Argument.name">ScriptPath</stringProp>
-                  <stringProp name="Argument.value">${__P(script_path)}/run_nova_api_perf_analyzer.sh</stringProp>
+                  <stringProp name="Argument.value">${__P(script_path)}/run_python_script.sh</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
                 <elementProp name="Command" elementType="Argument">
                   <stringProp name="Argument.name">Command</stringProp>
-                  <stringProp name="Argument.value">${create_api_name}:${create_server_request_id_g1}:${tenant_name}:jm_user:test_thread:${test_start_ms}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
+                  <stringProp name="Argument.value">${__P(script_path)}/nova_api_perf_analyzer.py:${create_api_name}:${create_server_request_id_g1}:${tenant_name}:jm_user:test_thread:${__P(timestamp_dir)}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -252,7 +297,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <hashTree/>
             </hashTree>
           </hashTree>
-          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
             <boolProp name="displayJMeterProperties">true</boolProp>
             <boolProp name="displayJMeterVariables">true</boolProp>
             <boolProp name="displaySystemProperties">true</boolProp>
@@ -322,7 +367,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               </RegexExtractor>
               <hashTree/>
             </hashTree>
-            <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+            <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
               <boolProp name="displayJMeterProperties">true</boolProp>
               <boolProp name="displayJMeterVariables">true</boolProp>
               <boolProp name="displaySystemProperties">true</boolProp>
@@ -333,12 +378,12 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="ScriptPath" elementType="Argument">
                     <stringProp name="Argument.name">ScriptPath</stringProp>
-                    <stringProp name="Argument.value">${__P(script_path)}/run_nova_api_perf_analyzer.sh</stringProp>
+                    <stringProp name="Argument.value">${__P(script_path)}/run_python_script.sh</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                   <elementProp name="Command" elementType="Argument">
                     <stringProp name="Argument.name">Command</stringProp>
-                    <stringProp name="Argument.value">${snapshot_api_name}:${create_snapshot_request_id_g1}:${tenant_name}:jm_user:test_thread:${test_start_ms}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
+                    <stringProp name="Argument.value">${__P(script_path)}/nova_api_perf_analyzer.py:${snapshot_api_name}:${create_snapshot_request_id_g1}:${tenant_name}:jm_user:test_thread:${__P(timestamp_dir)}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -392,7 +437,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               </RegexExtractor>
               <hashTree/>
             </hashTree>
-            <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+            <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
               <boolProp name="displayJMeterProperties">true</boolProp>
               <boolProp name="displayJMeterVariables">true</boolProp>
               <boolProp name="displaySystemProperties">true</boolProp>
@@ -445,7 +490,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
             </RegexExtractor>
             <hashTree/>
           </hashTree>
-          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="false">
             <boolProp name="displayJMeterProperties">true</boolProp>
             <boolProp name="displayJMeterVariables">true</boolProp>
             <boolProp name="displaySystemProperties">true</boolProp>
@@ -456,12 +501,12 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <collectionProp name="Arguments.arguments">
                 <elementProp name="ScriptPath" elementType="Argument">
                   <stringProp name="Argument.name">ScriptPath</stringProp>
-                  <stringProp name="Argument.value">${__P(script_path)}/run_nova_api_perf_analyzer.sh</stringProp>
+                  <stringProp name="Argument.value">${__P(script_path)}/run_python_script.sh</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
                 <elementProp name="Command" elementType="Argument">
                   <stringProp name="Argument.name">Command</stringProp>
-                  <stringProp name="Argument.value">${delete_api_name}:${delete_server_request_id_g1}:${tenant_name}:jm_user:test_thread:${test_start_ms}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
+                  <stringProp name="Argument.value">${__P(script_path)}/nova_api_perf_analyzer.py:${delete_api_name}:${delete_server_request_id_g1}:${tenant_name}:jm_user:test_thread:${__P(timestamp_dir)}:${__P(flavor_ref)}:-l:${__P(nova_log_path)}</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -470,17 +515,17 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
           </JavaSampler>
           <hashTree/>
         </hashTree>
-        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Generate Log Analysis Reports" enabled="true">
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Generate Jmeter Reports" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="ScriptPath" elementType="Argument">
                 <stringProp name="Argument.name">ScriptPath</stringProp>
-                <stringProp name="Argument.value">${__P(script_path)}/run_log_analysis_report_generator.sh</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/run_python_script.sh</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
               <elementProp name="Command" elementType="Argument">
                 <stringProp name="Argument.name">Command</stringProp>
-                <stringProp name="Argument.value">${test_start_ms}:${__P(reports_dir)}/stats</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/jmeter_report_generator.py:${__P(test_reports_ts_dir)}/jtls:${__P(test_reports_ts_dir)}/stats:${__P(cmd_runner_dir)}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
@@ -488,37 +533,23 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
           <stringProp name="classname">ShellExecutor</stringProp>
         </JavaSampler>
         <hashTree/>
-        <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/assertion_results.jtl</stringProp>
-        </ResultCollector>
+        <JavaSampler guiclass="JavaTestSamplerGui" testclass="JavaSampler" testname="Generate Log Analysis Reports" enabled="true">
+          <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="ScriptPath" elementType="Argument">
+                <stringProp name="Argument.name">ScriptPath</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/run_python_script.sh</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+              <elementProp name="Command" elementType="Argument">
+                <stringProp name="Argument.name">Command</stringProp>
+                <stringProp name="Argument.value">${__P(script_path)}/log_analysis_report_generator.py:${__P(timestamp_dir)}:${__P(reports_dir)}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+          <stringProp name="classname">ShellExecutor</stringProp>
+        </JavaSampler>
         <hashTree/>
         <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -549,7 +580,73 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/aggregate_report.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/aggregate_report.jtl</stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="AssertionVisualizer" testclass="ResultCollector" testname="Assertion Results" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/assertion_results.jtl</stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="kg.apc.jmeter.vizualizers.HitsPerSecondGui" testclass="ResultCollector" testname="jp@gc - Hits per Second" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/hits_per_second.jtl</stringProp>
+          <longProp name="interval_grouping">1000</longProp>
+          <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="kg.apc.jmeter.vizualizers.ThreadsStateOverTimeGui" testclass="ResultCollector" testname="jp@gc - Active Threads Over Time" enabled="true">
@@ -581,7 +678,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/active_threads_over_time.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/active_threads_over_time.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -615,41 +712,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/bytes_throughput_overtime.jtl</stringProp>
-          <longProp name="interval_grouping">1000</longProp>
-          <boolProp name="graph_aggregated">false</boolProp>
-        </ResultCollector>
-        <hashTree/>
-        <ResultCollector guiclass="kg.apc.jmeter.vizualizers.HitsPerSecondGui" testclass="ResultCollector" testname="jp@gc - Hits per Second" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/hits_per_second.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/bytes_throughput_overtime.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -683,7 +746,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/response_code_per_second.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/response_code_per_second.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -717,7 +780,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_over_time.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/response_times_over_time.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -751,7 +814,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_distribution.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/response_times_distribution.jtl</stringProp>
           <longProp name="interval_grouping">100</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -785,7 +848,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/response_latencies_over_time.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/response_latencies_over_time.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -819,7 +882,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_percentiles.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/response_times_percentiles.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -853,7 +916,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/perf_mon.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/perf_mon.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
           <collectionProp name="metricConnections">
@@ -919,7 +982,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/throughput_vs_threads.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/throughput_vs_threads.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -953,7 +1016,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/response_times_vs_threads.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/response_times_vs_threads.jtl</stringProp>
           <longProp name="interval_grouping">500</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -987,7 +1050,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/transactions_pers_second.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/transactions_pers_second.jtl</stringProp>
           <longProp name="interval_grouping">1000</longProp>
           <boolProp name="graph_aggregated">false</boolProp>
         </ResultCollector>
@@ -1021,40 +1084,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/summary_report.jtl</stringProp>
-        </ResultCollector>
-        <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>true</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>true</fieldNames>
-              <responseHeaders>true</responseHeaders>
-              <requestHeaders>true</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/view_results_tree.jtl</stringProp>
-          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/summary_report.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="StatGraphVisualizer" testclass="ResultCollector" testname="Aggregate Graph" enabled="true">
@@ -1086,7 +1116,7 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/aggregate_graph.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/aggregate_graph.jtl</stringProp>
         </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="DistributionGraphVisualizer" testclass="ResultCollector" testname="Distribution Graph (alpha)" enabled="true">
@@ -1118,7 +1148,40 @@ vars.put(&quot;test_start_ms&quot;,test_start_time);</stringProp>
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">${__P(reports_dir)}/jtls/distribution_graph.jtl</stringProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/distribution_graph.jtl</stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>true</responseData>
+              <samplerData>false</samplerData>
+              <xml>true</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>true</responseHeaders>
+              <requestHeaders>true</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+            </value>
+          </objProp>
+          <stringProp name="filename">${__P(test_reports_ts_dir)}/jtls/view_results_tree.jtl</stringProp>
+          <boolProp name="ResultCollector.success_only_logging">true</boolProp>
         </ResultCollector>
         <hashTree/>
         <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer" enabled="true">

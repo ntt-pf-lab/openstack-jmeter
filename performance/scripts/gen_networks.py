@@ -17,6 +17,9 @@ if __name__ == "__main__":
   tenants_file = sys.argv[6] + '/tenants.csv'
   nova_manage_path = sys.argv[7]
 
+  print "Arguments passed to networks creation script are: ", sys.argv
+
+
   nova_manage = nova_manage_path + '/nova-manage'
   tenants = open(tenants_file,'r').readlines() 
 

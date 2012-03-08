@@ -34,7 +34,8 @@ class NovaAPIAnalyzer(object):
         self.thread_group = thread_group
         self.config = utils.PerfAnalyzerConfig()
         self.results_dir = os.path.join(self.config.result_file_dir,\
-                                        test_start_ms)
+                                        test_start_ms,
+                                        "stats")
         if not os.path.exists(self.results_dir):
             os.makedirs(self.results_dir)
         self.output_format = output_format
