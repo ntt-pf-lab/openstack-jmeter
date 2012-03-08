@@ -4,8 +4,10 @@
 
 # Common test properties
 
-script_path=~/openstack/performance/scripts
-test_data_dir=~/openstack/performance/test_data
+script_path=~/openstack-jmeter/performance/scripts
+test_data_dir=~/openstack-jmeter/performance/keystone/test_data
+reports_dir=~/openstack-jmeter/performance/reports
+nova_log_path=/mnt/openstack_logs/user.log
 
 # Thread Properties for various Test plans
 

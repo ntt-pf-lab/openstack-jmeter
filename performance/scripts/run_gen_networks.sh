@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python /home/rohit/openstack/performance/scripts/gen_networks.py $@
+python /home/rohit/openstack-jmeter/performance/scripts/gen_networks.py $@

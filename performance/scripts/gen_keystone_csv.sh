@@ -11,9 +11,7 @@ fi
 
 if [ -z $test_data2 ]
 then
-    echo "Unset" >> /dev/null
     echo $test_data >> $test_data_dir/$csv_file
 else
-    echo "set">> /dev/null
     echo "$test_data,$test_data2" >> $test_data_dir/$csv_file
 fi
